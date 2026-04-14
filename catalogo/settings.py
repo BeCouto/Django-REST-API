@@ -110,3 +110,9 @@ ALLOWED_HOSTS = os.getenv(
 # Arquivos estáticos para deploy
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Configuração global do Django REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,  # Vamos colocar 2 apenas para você testar facilmente. Depois pode mudar para 10, 20 ou 50.
+}
