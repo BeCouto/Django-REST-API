@@ -4,7 +4,7 @@ Este projeto foi desenvolvido para a disciplina de **Big Data e Computação em 
 
 ## 🔗 Links do Projeto
 
-  * **API em Produção (AWS):** http://catalogo-produtos-ap1...elasticbeanstalk.com/
+  * **API em Produção (AWS):** http://catalogo-produtos-ap1...elasticbeanstalk.com/api/produtos/
   * **Repositório GitHub:** [https://github.com/BeCouto/AP1_BigData.git]
 
 -----
