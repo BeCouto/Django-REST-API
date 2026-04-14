@@ -1,0 +1,12 @@
+# Ambiente virtual
+.venv/
+
+# Banco de dados local
+db.sqlite3
+
+# Arquivos compactados do Elastic Beanstalk
+*.zip
+
+# Cache do Python
+__pycache__/
+*.pyc
