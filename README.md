@@ -4,15 +4,18 @@ Este projeto foi desenvolvido para a disciplina de **Big Data e Computação em 
 
 ## 🔗 Links do Projeto
 
-  * **API em Produção (AWS):** http://catalogo-produtos-ap1...elasticbeanstalk.com/api/produtos/
+  * **API em Produção (AWS):** http://catalogo-produtos-ap1-env-1.eba-qxbikzvf.us-east-1.elasticbeanstalk.com/
   * **Repositório GitHub:** [https://github.com/BeCouto/AP1_BigData.git]
 
 -----
 
-## 👨‍🎓 Autor
+## 👨‍🎓 Autor e integrantes do grupo 
 
-  * **Nome:** Gabriel Couto
   * **Curso:** Ciência de Dados e Inteligência Artificial (5º Período) - Ibmec Barra
+  * **Nome:** Gabriel Couto
+  * **Nome:** Enzo Guedes Cardoso
+  * **Nome:** bernardo ottan procopio
+  * **Nome:** Daniel de Jesus Teixeira
 
 -----
 
@@ -74,7 +77,7 @@ Conforme os critérios da AP1, as etapas realizadas foram:
 
 1.  **Clone o projeto:**
     ```bash
-    git clone [seu-link-aqui]
+    git clone [https://github.com/BeCouto/AP1_BigData.git]
     ```
 2.  **Crie o ambiente virtual:**
     ```bash
