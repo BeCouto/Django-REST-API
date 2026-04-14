@@ -53,6 +53,10 @@ Implementei uma rota específica para análise de dados, processada diretamente 
 
 Configuração de paginação em todos os endpoints de lista para evitar sobrecarga no servidor e melhorar a experiência de consumo da API.
 
+### 5/. Resolução de Problemas (Troubleshooting):
+
+Durante os testes de deploy, identificamos através da leitura dos logs (eb-engine.log) uma falha na instalação de dependências. O problema foi resolvido isolando e comentando a biblioteca psycopg2-binary no requirements.txt, que não é necessária para o escopo inicial com SQLite, garantindo assim que a instância EC2 da AWS finalizasse o provisionamento com sucesso
+
 -----
 
 ## 📂 Documentação das Etapas (Relatório de Desenvolvimento)
