@@ -15,6 +15,7 @@ urlpatterns = [
     
 ]
 
-# Configuração para servir arquivos de mídia em desenvolvimento
-if settings.DEBUG:
+# Configuração para servir arquivos de mídia apenas se S3 estiver desligado
+import os
+if settings.DEBUG and os.getenv('USE_S3') != 'True':
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

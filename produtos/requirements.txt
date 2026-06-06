@@ -1,0 +1,11 @@
+asgiref==3.11.1
+Django==6.0.4
+djangorestframework==3.17.1
+gunicorn==25.3.0
+packaging==26.0
+pillow==12.2.0
+sqlparse==0.5.5
+tzdata==2026.1
+psycopg[binary]
+boto3==1.28.56
+django-storages==1.14.6

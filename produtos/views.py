@@ -11,9 +11,10 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
 
 class ProdutoViewSet(viewsets.ModelViewSet):
-    queryset = Produto.objects.all()
+    # ✅ AP2: Otimização N+1 para não sobrecarregar o RDS
+    queryset = Produto.objects.select_related('categoria').all()
     serializer_class = ProdutoSerializer
-
+    
     @action(detail=False, methods=['get'])
     def estatisticas(self, request):
         """Retorna estatísticas gerais de produtos"""
