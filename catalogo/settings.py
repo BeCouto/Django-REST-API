@@ -1,19 +1,22 @@
 import os
 from pathlib import Path
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configuração de DEBUG - True para desenvolvimento
-DEBUG = True if os.getenv('DJANGO_DEBUG', 'True') == 'True' else False
+# ✅ AP2: DEBUG via variável de ambiente (nunca hardcoded em produção)
+# Se não for passado no EB, ele será False por padrão, garantindo a segurança.
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-DEBUG = True
+# ✅ AP2: SECRET_KEY via variável de ambiente (Segurança)
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-chave-local-desenvolvimento')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cl8cce64_qa^1_bd^w=@itcl46(b3lzamro4^l6no90+##7c2e'
-
-ALLOWED_HOSTS = []
+# ✅ AP2: Hosts permitidos (importante para Elastic Beanstalk) consolidado aqui no topo
+ALLOWED_HOSTS = os.getenv(
+    'DJANGO_ALLOWED_HOSTS',
+    'localhost,127.0.0.1,.elasticbeanstalk.com'
+).split(',')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -57,7 +60,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'catalogo.wsgi.application'
 
 
-# --- BANCO DE DADOS ---
+# --- BANCO DE DADOS (AP2: SQLite local ou RDS PostgreSQL em Prod) ---
 if os.getenv('DB_NAME'):
     DATABASES = {
         'default': {
@@ -80,7 +83,6 @@ else:
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -99,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -112,20 +113,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-# Hosts permitidos (importante para Elastic Beanstalk)
-ALLOWED_HOSTS = os.getenv(
-    'DJANGO_ALLOWED_HOSTS',
-    'localhost,127.0.0.1,.elasticbeanstalk.com'
-).split(',')
-
 # Arquivos estáticos para deploy
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# --- ARMAZENAMENTO DE MÍDIA (S3) ---
+# --- ARMAZENAMENTO DE MÍDIA (AP2: S3 AWS Educate) ---
 if os.getenv('USE_S3') == 'True':
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    # ✅ AP2: AWS_SESSION_TOKEN é OBRIGATÓRIO no AWS Educate (Senão dá erro de Auth)
+    AWS_SESSION_TOKEN = os.getenv('AWS_SESSION_TOKEN')
+    
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
     AWS_S3_FILE_OVERWRITE = False
@@ -142,8 +140,9 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
+
 # Configuração global do Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2,  # Vamos colocar 2 apenas para você testar facilmente. Depois pode mudar para 10, 20 ou 50.
+    'PAGE_SIZE': 10,  # ✅ Ajustado para 10 (ideal para AP2 em nuvem)
 }
