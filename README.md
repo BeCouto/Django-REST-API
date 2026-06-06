@@ -4,8 +4,8 @@ Este projeto foi desenvolvido para a disciplina de **Big Data e Computação em 
 
 ## 🔗 Links do Projeto
 
-  * **API em Produção (AWS):** http://catalogo-produtos-ap1-env-1.eba-qxbikzvf.us-east-1.elasticbeanstalk.com/
-  * **Repositório GitHub:** [https://github.com/BeCouto/AP1_BigData.git]
+  * **API em Produção (AWS):** 
+  * **Repositório GitHub:** 
 
 -----
 
@@ -77,7 +77,6 @@ Conforme os critérios da AP1, as etapas realizadas foram:
 
 1.  **Clone o projeto:**
     ```bash
-    git clone [https://github.com/BeCouto/AP1_BigData.git]
     ```
 2.  **Crie o ambiente virtual:**
     ```bash
