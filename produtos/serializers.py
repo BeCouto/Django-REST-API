@@ -42,7 +42,8 @@ class ItemPedidoSerializer(serializers.ModelSerializer):
         return value
 
 class PedidoSerializer(serializers.ModelSerializer):
-    itens = ItemPedidoSerializer(read_only=True, many=True, source='itens')
+    # ✅ CORREÇÃO: Sem o source='itens' e usando o ItemPedidoSerializer que já foi lido acima
+    itens = ItemPedidoSerializer(read_only=True, many=True)
     total = serializers.SerializerMethodField()
     
     class Meta:
