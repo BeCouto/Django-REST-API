@@ -115,8 +115,7 @@ USE_TZ = True
 
 # Arquivos estáticos para deploy
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # --- ARMAZENAMENTO DE MÍDIA (AP2: S3 AWS Educate) ---
 if os.getenv('USE_S3') == 'True':
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')

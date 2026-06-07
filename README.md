@@ -1,99 +1,110 @@
-# AP1 - Catálogo de Produtos e Categorias (Django REST API)
+# AP1 e AP2 - Catálogo de Produtos e E-commerce (Django REST API na AWS)
 
-Este projeto foi desenvolvido para a disciplina de **Big Data e Computação em Nuvem** no curso de Ciência de Dados e Inteligência Artificial do **Ibmec Barra**. O objetivo principal é construir uma API robusta e escalável utilizando Django REST Framework, com deploy totalmente funcional na nuvem AWS.
+Este projeto foi desenvolvido para a disciplina de **Big Data e Computação em Nuvem** no curso de Ciência de Dados e Inteligência Artificial do **Ibmec Barra**. 
 
-## 🔗 Links do Projeto
+O objetivo da AP2 foi evoluir a aplicação monolítica da AP1, implementando um modelo de e-commerce e migrando a infraestrutura para uma **arquitetura de nuvem escalável, segura e voltada para produção**, utilizando bancos de dados gerenciados, armazenamento de objetos e regras de firewall restritas.
 
-  * **API em Produção (AWS):** 
-  * **Repositório GitHub:** 
+🔗 **Links do Projeto:**
+* **API em Produção (AWS):** [http://ap2-becouto-env.eba-pvhunujs.us-east-1.elasticbeanstalk.com/]
+* **Repositório GitHub:** https://github.com/BeCouto/Django-REST-API.git
 
------
+---
 
-## 👨‍🎓 Autor e integrantes do grupo 
+## 👥 Autores e Integrantes do Grupo
+* **Curso:** Ciência de Dados e Inteligência Artificial (5º Período) - Ibmec Barra
+* Gabriel Couto
+* Enzo Guedes Cardoso
+* Bernardo Ottan Procopio
+* Daniel de Jesus Teixeira
 
-  * **Curso:** Ciência de Dados e Inteligência Artificial (5º Período) - Ibmec Barra
-  * **Nome:** Gabriel Couto
-  * **Nome:** Enzo Guedes Cardoso
-  * **Nome:** bernardo ottan procopio
-  * **Nome:** Daniel de Jesus Teixeira
+---
 
------
+## 🏗️ Arquitetura da Solução (Evolução AP1 ➡️ AP2)
 
-## 🛠️ Tecnologias e Arquitetura
+Na **AP1**, a aplicação era um monólito simples, utilizando banco de dados local (`SQLite`), mídias salvas no disco do servidor e configurações expostas.
 
-Para garantir a escalabilidade e facilidade de migração futura, o projeto utiliza:
+Na **AP2**, o sistema foi inteiramente refatorado para operar nas melhores práticas de **Cloud Computing na AWS**:
+1. **App Server (PaaS):** Hospedagem no **AWS Elastic Beanstalk** (Python 3.12 / Gunicorn / Nginx). Foi configurado um pipeline via `.ebextensions` para ativar o ambiente virtual e coletar arquivos estáticos dinamicamente em cada deploy.
+2. **Database (RDS):** Migração para **PostgreSQL no AWS RDS**. O banco de dados foi isolado: o Security Group padrão (`0.0.0.0/0`) foi removido, aplicando o Princípio do Menor Privilégio, permitindo apenas tráfego vindo da instância EC2.
+3. **Storage (S3):** Integração com `boto3` e `django-storages`. Arquivos de mídia e imagens de produtos são salvos em um bucket **AWS S3**. Para evitar o uso de chaves ou tokens expiráveis, o acesso foi concedido diretamente via **IAM Role** anexada à instância EC2.
+4. **Segurança e Isolamento:** Senhas do banco, chaves da AWS (`SECRET_KEY`) e hosts permitidos foram isolados nas **Environment Properties** do Elastic Beanstalk, garantindo que nenhum dado sensível trafegue no código-fonte.
 
-  * **Linguagem:** Python 3.13 (Local) / Python 3.12 (AWS)
-  * **Framework:** Django 6.x com Django REST Framework (DRF)
-  * **Banco de Dados:** SQLite (Base para futura migração para RDS)
-  * **Cloud (PaaS):** AWS Elastic Beanstalk
-  * **Servidor de Aplicação:** Gunicorn
+---
 
------
+## ✨ Novas Funcionalidades (AP2)
 
-## 🚀 Funcionalidades Implementadas
+### 1. Carrinho de Compras (Pedidos e Itens)
+Foram criadas as entidades `Pedido` e `ItemPedido` no banco de dados, estabelecendo relação com `Produto`. A API permite criar pedidos, adicionar produtos a eles, calcular totais automaticamente e alterar status de entrega.
+* `GET /api/pedidos/`
+* `GET /api/itens-pedidos/`
 
-### 1\. CRUD Completo de Produtos e Categorias
+### 2. 🌟 Ponto Bônus: JSONB com JSONField (PostgreSQL)
+Implementamos um modelo híbrido relacional/documento utilizando o campo `JSONField` nativo do PostgreSQL.
+O modelo `Produto` possui um campo `atributos_extras` que permite salvar dicionários de metadados dinâmicos. Foram criados endpoints avançados para busca dentro do JSON:
+* **Filtro Direto:** `/api/produtos/filtrar_por_json/?marca=Dell&ram_gb=16`
+* **Busca Aninhada (Especificações):** `/api/produtos/buscar_por_especificacoes/?cpu=i7&armazenamento=512GB`
+* **Filtro Combinado (Relacional + JSON):** `/api/produtos/filtro_combinado/?categoria_id=1&marca=Dell&preco_max=3000`
 
-A API permite o gerenciamento total de itens e suas respectivas categorias através dos endpoints:
+**Quando usar Campo Relacional vs JSONField?**
+* **Campo Relacional:** Ideal para dados fortemente estruturados, relacionamentos obrigatórios e integridade referencial (Ex: `Categoria`, `Pedido`).
+* **JSONField:** Ideal para atributos opcionais e documentos semi-estruturados onde a flexibilidade é mais importante que a normalização estrita (Ex: especificações técnicas dinâmicas de hardware).
 
-  * `GET /api/produtos/`
-  * `GET /api/categorias/`
+---
 
-### 2\. Endpoint Analítico (Business Intelligence) - **Diferencial**
+## 💻 Passo a Passo: Execução Local
 
-Implementei uma rota específica para análise de dados, processada diretamente via ORM do Django para garantir performance:
+1. **Clone o repositório e acesse a pasta:**
+   ```bash
+   git clone [https://github.com/BeCouto/Django-REST-API.git]
+   cd Django-REST-API
 
-  * **Rota:** `/api/produtos/estatisticas/`
-  * **Dados:** Retorna o total de itens, preço médio global e distribuição de produtos agrupados por categoria.
+```
 
-### 3\. Filtros e Busca Inteligente
+2. **Crie o ambiente virtual:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
 
-  * **Filtro por Categoria:** `/api/produtos/?categoria=[ID]`
-  * **Busca Textual:** `/api/produtos/?nome=[termo]` (Case-insensitive)
+```
 
-### 4\. Paginação Global
 
-Configuração de paginação em todos os endpoints de lista para evitar sobrecarga no servidor e melhorar a experiência de consumo da API.
+3. **Instale as dependências:**
+```bash
+pip install -r requirements.txt
 
-### 5\. Resolução de Problemas 
+```
 
-Durante os testes de deploy, identifiquei através da leitura dos logs (eb-engine.log) uma falha na instalação de dependências. O problema foi resolvido isolando e comentando a biblioteca psycopg2-binary no requirements.txt, que não é necessária para o escopo inicial com SQLite, garantindo assim que a instância EC2 da AWS finalizasse o provisionamento com sucesso
 
------
+4. **Configure as Variáveis de Ambiente locais (Crie um arquivo .env ou exporte):**
+```bash
+DB_NAME=seu_banco_local
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+USE_S3=False # Para rodar estáticos localmente
 
-## 📂 Documentação das Etapas (Relatório de Desenvolvimento)
+```
 
-Conforme os critérios da AP1, as etapas realizadas foram:
 
-1.  **Modelagem de Dados:** Criação da classe `Categoria` e estabelecimento de relacionamento `ForeignKey` (Um-para-Muitos) com a classe `Produto`.
-2.  **Lógica de Negócio e Validação:** Implementação de validações customizadas no `serializers.py` para garantir que campos críticos (como preço) não aceitem valores negativos.
-3.  **Configuração de Ambiente:** Criação do arquivo `requirements.txt` e `Procfile` para detecção automática da AWS.
-4.  **Deploy na Nuvem:** O deploy foi realizado via empacotamento `app.zip` (higienizado sem `venv` ou bancos locais) diretamente no console do **AWS Elastic Beanstalk**, utilizando as `.ebextensions` fornecidas no roteiro de aula.
+5. **Rode as migrações e o servidor:**
+```bash
+python manage.py migrate
+python manage.py runserver
 
------
+```
 
-## 💻 Como Rodar Localmente
+---
 
-1.  **Clone o projeto:**
-    ```bash
-    ```
-2.  **Crie o ambiente virtual:**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # Linux/Mac
-    .venv\Scripts\activate     # Windows
-    ```
-3.  **Instale as dependências:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-4.  **Rode as migrações e o servidor:**
-    ```bash
-    python manage.py migrate
-    python manage.py runserver
-    ```
+## 🔐 Acesso ao Painel Administrativo (Django Admin)
 
------
+Para facilitar a correção, o superusuário de produção é gerado automaticamente durante o processo de deploy no AWS Elastic Beanstalk, consumindo as credenciais seguras injetadas via *Environment Properties*.
 
-*Este projeto é parte integrante da avaliação AP1 da graduação do Ibmec Barra.*
+**Acesso na Nuvem (AWS):**
+* **URL:** `http://ap2-becouto-env.eba-pvhunujs.us-east-1.elasticbeanstalk.com/admin/`
+* **Usuário:** Gabriel
+* **Senha:** 12345678
+
+**Criação Local (Ambiente de Desenvolvimento):**
+Caso deseje rodar a aplicação localmente, o banco `db.sqlite3` virá vazio. Para criar o seu próprio administrador, execute o comando abaixo no terminal com o ambiente virtual ativado:
+```bash
+python manage.py createsuperuser
